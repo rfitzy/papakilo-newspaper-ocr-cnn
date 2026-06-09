@@ -1,0 +1,11 @@
+pymupdf
+pytesseract
+opencv-python-headless
+pillow
+numpy
+deep-translator
+anthropic
+# Tesseract itself is a system binary, not a pip package — install it separately:
+#   macOS:  brew install tesseract tesseract-lang
+#   Ubuntu: sudo apt-get install tesseract-ocr tesseract-ocr-haw
+# (tesseract-lang / tesseract-ocr-haw provide the Hawaiian model 'haw'.)
