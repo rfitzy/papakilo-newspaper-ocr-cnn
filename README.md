@@ -3,18 +3,19 @@
 A Jupyter notebook pipeline that:
 
 1. Loads a PDF of scanned Hawaiian-language newspaper pages,
-2. Runs **Tesseract OCR** with the Hawaiian model (`haw`) to read what's on the page,
+2. Runs **Tesseract OCR** (Latin/`eng` model — Tesseract has no Hawaiian model) to read the letters on the page,
 3. **Audits a reference transcription** you paste in against the page OCR — flagging where the reference may be wrong so you can correct it (the scanned page is the source of truth, not the reference),
 4. Translates the corrected Hawaiian into English (free Google Translate by default; Claude optional).
 
 ## Setup
 
 ```bash
-# 1. Install the Tesseract engine + Hawaiian model (system package, not pip)
+# 1. Install the Tesseract engine (system package, not pip).
+#    There is no Hawaiian model, so we use the built-in eng (Latin) model.
 #    macOS:
-brew install tesseract tesseract-lang
+brew install tesseract
 #    Debian/Ubuntu:
-# sudo apt-get install tesseract-ocr tesseract-ocr-haw
+# sudo apt-get install tesseract-ocr
 
 # 2. Create and activate a virtual environment (Python 3.9+)
 python3 -m venv .venv
@@ -30,7 +31,7 @@ export ANTHROPIC_API_KEY=sk-ant-...
 jupyter notebook hawaiian_newspaper_ocr.ipynb
 ```
 
-Confirm the Hawaiian model installed: `tesseract --list-langs` should include `haw`.
+Confirm Tesseract works: `tesseract --list-langs` should include `eng`. (There is no `haw` model — Hawaiian isn't a supported Tesseract language, which is why the audit folds out diacritics; see below.)
 
 ## Inputs
 
@@ -59,7 +60,7 @@ reference → paste it back and re-run until only OCR-noise flags remain → tra
 
 ## OCR notes
 
-- Uses Tesseract's LSTM engine with `lang="haw"`. For mixed Hawaiian/English pages set `OCR_LANG = "haw+eng"`.
+- Uses Tesseract's LSTM engine with the `eng` model — **Tesseract has no Hawaiian model**. `eng` reads the base letters but not the ʻokina or macrons, so the audit folds diacritics out of both sides before comparing; verify diacritics against the page image (or the optional Claude vision cell).
 - If OCR is weak, raise `RENDER_DPI`, toggle `PREPROCESS`, or adjust `TESS_CONFIG` (`--psm` mode).
 
 ## Translation backends
